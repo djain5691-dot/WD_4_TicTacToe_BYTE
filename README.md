@@ -13,7 +13,7 @@ Developed as a submission for a **Web Development Internship Task**.
 
 ## 🌟 Live Demo
 
-> 🔗 **Live URL**: [https://your-github-username.github.io/tic-tac-toe/](https://github.com)  
+> 🔗 **Live URL**: https://djain5691-dot.github.io/WD_4_TicTacToe_BYTE/
 *(Deploy on GitHub Pages, Vercel, or Netlify with a single click)*
 
 ---
