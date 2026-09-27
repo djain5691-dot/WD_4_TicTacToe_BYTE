@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A modern, responsive, and interactive browser-based 3x3 Tic Tac Toe game built with HTML, CSS, and Vanilla JavaScript.">
+  <meta name="keywords" content="Tic Tac Toe, JavaScript Game, Web Development Internship, Browser Game, Vanilla JS">
+  <meta name="author" content="Internship Project">
+  <title>Tic Tac Toe | Modern 2-Player Web Game</title>
+                                                                                                          
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Ambient background glow elements -->
+  <div class="ambient-glow glow-1" aria-hidden="true"></div>
+  <div class="ambient-glow glow-2" aria-hidden="true"></div>
+
+  <!-- Confetti Canvas -->
+  <canvas id="confetti-canvas" class="confetti-canvas" aria-hidden="true"></canvas>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo-area">
+        <div class="logo-icon" aria-hidden="true">
+          <span class="logo-x">✕</span>
+          <span class="logo-o">◯</span>
+        </div>
+        <div class="logo-text">
+          <h1 class="app-title">TIC TAC TOE</h1>
+          <span class="app-subtitle">Ultimate 2-Player Showdown</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button id="sound-toggle-btn" class="icon-btn" aria-label="Toggle Sound Effects" title="Toggle Sound">
+          <svg id="sound-on-icon" class="btn-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          </svg>
+          <svg id="sound-off-icon" class="btn-svg hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <line x1="23" y1="9" x2="17" y2="15"></line>
+            <line x1="17" y1="9" x2="23" y2="15"></line>
+          </svg>
+        </button>
+
+        <button id="rules-btn" class="icon-btn" aria-label="Game Rules and How to Play" title="How to Play">
+          <svg class="btn-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Game Section -->
+    <main class="game-wrapper">
+      <!-- Scoreboard -->
+      <section class="scoreboard" aria-label="Scoreboard">
+        <!-- Player X Card -->
+        <div id="player-x-card" class="player-card player-x active" aria-label="Player X">
+          <div class="player-avatar x-avatar">✕</div>
+          <div class="player-info">
+            <span class="player-name">Player X</span>
+            <span class="turn-badge" id="player-x-badge">Current Turn</span>
+          </div>
+          <div class="score-display">
+            <span class="score-label">Wins</span>
+            <span id="score-x" class="score-value">0</span>
+          </div>
+        </div>
+
+        <!-- Ties Card -->
+        <div class="player-card ties-card" aria-label="Draws Count">
+          <div class="player-avatar tie-avatar">🤝</div>
+          <div class="player-info">
+            <span class="player-name">Ties</span>
+            <span class="draw-label">Stalemates</span>
+          </div>
+          <div class="score-display">
+            <span class="score-label">Draws</span>
+            <span id="score-ties" class="score-value">0</span>
+          </div>
+        </div>
+
+        <!-- Player O Card -->
+        <div id="player-o-card" class="player-card player-o" aria-label="Player O">
+          <div class="player-avatar o-avatar">◯</div>
+          <div class="player-info">
+            <span class="player-name">Player O</span>
+            <span class="turn-badge" id="player-o-badge">Waiting</span>
+          </div>
+          <div class="score-display">
+            <span class="score-label">Wins</span>
+            <span id="score-o" class="score-value">0</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Status Banner -->
+      <section class="status-section">
+        <div id="status-banner" class="status-banner" role="status" aria-live="polite">
+          <span class="status-icon" id="status-icon">🎮</span>
+          <span id="status-message" class="status-text">Player X's Turn to Move</span>
+        </div>
+      </section>
+
+      <!-- 3x3 Game Board Grid -->
+      <section class="board-container" id="board-container">
+        <!-- Win Strike Line Layer -->
+        <div id="strike-line" class="strike-line hidden" aria-hidden="true"></div>
+
+        <div class="game-board" id="game-board" role="grid" aria-label="Tic Tac Toe Board 3 by 3" data-current-turn="X">
+          <button class="cell" id="cell-0" data-cell-index="0" role="gridcell" aria-label="Cell 1, Row 1 Column 1" tabindex="0"></button>
+          <button class="cell" id="cell-1" data-cell-index="1" role="gridcell" aria-label="Cell 2, Row 1 Column 2" tabindex="0"></button>
+          <button class="cell" id="cell-2" data-cell-index="2" role="gridcell" aria-label="Cell 3, Row 1 Column 3" tabindex="0"></button>
+          <button class="cell" id="cell-3" data-cell-index="3" role="gridcell" aria-label="Cell 4, Row 2 Column 1" tabindex="0"></button>
+          <button class="cell" id="cell-4" data-cell-index="4" role="gridcell" aria-label="Cell 5, Row 2 Column 2" tabindex="0"></button>
+          <button class="cell" id="cell-5" data-cell-index="5" role="gridcell" aria-label="Cell 6, Row 2 Column 3" tabindex="0"></button>
+          <button class="cell" id="cell-6" data-cell-index="6" role="gridcell" aria-label="Cell 7, Row 3 Column 1" tabindex="0"></button>
+          <button class="cell" id="cell-7" data-cell-index="7" role="gridcell" aria-label="Cell 8, Row 3 Column 2" tabindex="0"></button>
+          <button class="cell" id="cell-8" data-cell-index="8" role="gridcell" aria-label="Cell 9, Row 3 Column 3" tabindex="0"></button>
+        </div>
+      </section>
+
+      <!-- Game Action Controls -->
+      <section class="controls-section">
+        <button id="reset-round-btn" class="btn btn-primary" title="Start a fresh round (Shortcut: R)">
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+          </svg>
+          <span>New Round</span>
+        </button>
+
+        <button id="reset-all-btn" class="btn btn-secondary" title="Reset game and clear all win scores">
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="1 4 1 10 7 10"></polyline>
+            <polyline points="23 20 23 14 17 14"></polyline>
+            <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
+          </svg>
+          <span>Reset Scores</span>
+        </button>
+      </section>
+
+      <!-- Keyboard Accessibility Hint -->
+      <aside class="accessibility-hint">
+        <span class="hint-pill">💡 Tip: Use Numpad <strong>1-9</strong> or <strong>Arrow Keys + Enter</strong> to play, <strong>R</strong> to Restart</span>
+      </aside>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>Crafted for Web Development Internship Task &bull; Clean Vanilla JavaScript</p>
+    </footer>
+  </div>
+
+  <!-- How to Play / Rules Modal -->
+  <div id="rules-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="rules-modal-title">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-badge">Guide</span>
+          <h2 id="rules-modal-title">How to Play Tic Tac Toe</h2>
+        </div>
+        <button id="close-modal-btn" class="icon-btn close-btn" aria-label="Close Rules Modal">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="rule-item">
+          <div class="rule-number">1</div>
+          <div class="rule-content">
+            <h3>Two Players (X & O)</h3>
+            <p>The game is played on a 3x3 grid. Player 1 takes <strong>X</strong> (Cyan) and Player 2 takes <strong>O</strong> (Rose). Player X always moves first.</p>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-number">2</div>
+          <div class="rule-content">
+            <h3>Take Turns</h3>
+            <p>Players alternate turns placing their symbol into an empty square. Occupied cells cannot be overwritten.</p>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-number">3</div>
+          <div class="rule-content">
+            <h3>Winning Conditions</h3>
+            <p>The first player to align <strong>3 of their marks</strong> horizontally, vertically, or diagonally wins the match!</p>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-number">4</div>
+          <div class="rule-content">
+            <h3>Draw Condition</h3>
+            <p>If all 9 squares are filled without any player achieving 3 marks in a row, the round ends in a <strong>Draw (Tie)</strong>.</p>
+          </div>
+        </div>
+
+        <div class="rule-item">
+          <div class="rule-number">⌨️</div>
+          <div class="rule-content">
+            <h3>Keyboard Shortcuts</h3>
+            <p>Press <strong>1 to 9</strong> on your keyboard / numpad to quickly mark cells, <strong>R</strong> to start a new round, and <strong>Esc</strong> to close this dialog.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button id="got-it-btn" class="btn btn-primary modal-action-btn">Got It, Let's Play!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script src="script.js"></script>
+</body>
+</html>
